@@ -19,7 +19,7 @@ proc createNet*(net: NeuralNetRef): NeuralNetRef =
   result.layers = @[]
 
   #Build our hidden layers
-  for i in 0 .. <net.meta.numHiddenLayers:
+  for i in 0 ..< net.meta.numHiddenLayers:
     #Add a new hidden layer to the net. Auto initialises weights and neurons
     result.layers.add(newNeuronLayer(numNeurons=net.meta.numNeuronsPerHiddenLayer, net.meta.numInputs))
     echo "Added Number $1" % [$i]
@@ -74,7 +74,7 @@ proc updateInputs(net: NeuralNetRef, inputs: openarray[float64]): seq[float64] =
       netInput = 0
       numInputs = neuron.numInputs
 
-      for k in 0 .. <numInputs:
+      for k in 0 ..< numInputs:
         netInput += neuron.weights[k].value * inputs[cWeight]
         cWeight.inc
 
