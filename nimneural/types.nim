@@ -1,5 +1,18 @@
-from random import random, randomize
-randomize()
+import random
+import logging
+
+type Config* = object
+  dBias*: int
+  dActivationResponse*: int
+  dMaxPerturbation*: float
+  NumInputs*: int
+  NumHidden*: int
+  NeuronsPerHiddenLayer*: int
+  NumOutputs*: int
+  MutationRate*: float
+  CrossoverRate*: float
+  NumEliteCopies*: int
+  NumElite*: int
 
 #Nodes
 type
@@ -34,7 +47,34 @@ type
 
   NeuralNetRef = ref NeuralNetObj
 
+  GenomeObj = object
+    weights*: seq[WeightRef]
+    fitness*: float64
+
+  GenomeRef = ref GenomeObj
+
+  GenAlgObj = object
+    population*: seq[GenomeRef]
+    popSize: int
+    chromoLength: int
+    totalFitness: float64
+    bestFitness: float64
+    averageFitness: float64
+    worstFitness: float64
+    fittestGenome: int
+    mutationRate: float
+    crossoverRate: float
+    generationCounter: int
+
+  GenAlgRef = ref GenAlgObj
+
 #Operators
+
+proc `<`*(lhs, rhs: GenomeRef): bool = 
+  lhs.fitness < rhs.fitness
+
+proc `$`*(genome: GenomeRef): string = 
+  $genome.fitness
 
 proc `$`*(weight: WeightRef): string = 
   $weight.value
@@ -52,7 +92,7 @@ proc newWeight*(): WeightRef =
   # Creates a new Weight with a random value (0.0 <= x <= 1.0
   ]#
   new result
-  result.value = random(1.0)
+  result.value = random(-1.0 .. 1.0)
 
 ## Neurons
 
@@ -98,3 +138,29 @@ proc newNeuralNet*(meta: NeuralNetMeta): NeuralNetRef =
   new(result)
   result.meta = meta
   result.layers = @[]
+
+proc newGenome*(): GenomeRef = 
+  new(result)
+  result.weights = @[]
+  result.fitness = 0.0
+
+proc newGenome*(fitness: float64): GenomeRef = 
+  new(result)
+  result.weights = @[]
+  result.fitness = fitness
+
+proc newGenome*(fitness: float64, weights: openarray[float64]): GenomeRef = 
+  #[
+  # New Genome buitl with an array of float values
+  ]#
+  new(result)
+  result.fitness = fitness
+  for weight in weights:
+    result.weights.add(newWeight(weight))
+
+proc newGenome*(fitness: float64, weights: openarray[WeightRef]): GenomeRef = 
+  #[
+  # New Genome buitl with an array of WeightRefs
+  ]#
+  new(result)
+  result.fitness = fitness

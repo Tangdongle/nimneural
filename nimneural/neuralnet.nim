@@ -1,5 +1,11 @@
 from strutils import `%`
+from math import exp
+
+from config import loadConfig
 include types
+
+#Forward declarations
+proc sigmoid(netInput, response: float64): float64
 
 proc `$`*(net: NeuralNetRef): string = 
   "[$1] | [$2] | [$3] | [$4]" % [$net.meta.numInputs, $net.meta.numOutputs, $net.meta.numHiddenLayers,  $net.meta.numNeuronsPerHiddenLayer]
@@ -43,9 +49,40 @@ proc putWeights(net: NeuralNetRef, weights: openarray[float64]): NeuralNetRef =
   for ix, outer_neuron_layer in net.layers.pairs():
     for jx, neuron in outer_neuron_layer.neurons.pairs(): 
       for zx, weight in neuron.weights.pairs():
-        echo zx
-        #result.layers[ix].neurons[jx].weights[zx] = weight[weightCount]
+        result.layers[ix].neurons[jx].weights[zx] = newWeight(weights[weightCount])
         weightCount.inc
 
 
+proc updateInputs(net: NeuralNetRef, inputs: openarray[float64]): seq[float64] =
   
+  let config = loadConfig()
+  var cWeight, numInputs: int
+  var netInput: float64
+
+  let bias = config.dBias
+  let activationResponse = config.dActivationResponse
+
+  if inputs.len != net.meta.numInputs:
+    return result
+
+  #For each neuron, sum the (input * weights) Send this
+  # to our sigmoid function to get the output
+  for ix, outer_neuron_layer in net.layers.pairs():
+    cWeight = 0
+
+    for jx, neuron in outer_neuron_layer.neurons.pairs(): 
+      netInput = 0
+      numInputs = neuron.numInputs
+
+      for k in 0 .. <numInputs:
+        netInput += neuron.weights[k].value * inputs[cWeight]
+        cWeight.inc
+
+      netInput += neuron.weights[numInputs - 1].value * float(bias)
+
+      result.add(sigmoid(netInput, float(activationResponse)))
+
+      cWeight = 0
+
+proc sigmoid(netInput, response: float64): float64 = 
+  1 / (1 + exp(-netInput / response))

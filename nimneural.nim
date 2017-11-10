@@ -1,12 +1,9 @@
 import nimneural.neuralnet
+import nimneural.GenAlg
 
-let options = newNeuralNetMeta(64, 64, 3, 16)
-var net = newNeuralNet(options)
+let alg = newGenAlg(100, 20, 0.3, 0.7)
 
-let n = createNet(net)
-echo $n
+let s = alg.epoch(alg.population)
 
-for j in 0 .. <n.layers.len:
-  for z in 0 .. <n.layers[j].neurons.len:
-    for i in 0 .. <n.layers[j].neurons[z].weights.len:
-      echo $n.layers[j].neurons[z].weights[i]
+for i in s:
+  echo s
