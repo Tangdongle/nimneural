@@ -104,7 +104,7 @@ proc newNeuron*(numInputs: int): NeuronRef =
   result.numInputs = numInputs
   result.weights = newSeq[WeightRef](numInputs)
 
-  for i in 0 .. <numInputs:
+  for i in 0 ..< numInputs:
     result.weights[i] = newWeight()
 
   #Add a weight that will act as the threshold
@@ -115,7 +115,7 @@ proc newNeuronLayer*(numNeurons, numInputsPerNeuron: int): NeuronLayerRef =
   result.numNeurons = numNeurons
   result.neurons = newSeq[NeuronRef](numNeurons)
 
-  for i in 0 .. <numNeurons:
+  for i in 0 ..< numNeurons:
     result.neurons[i] = newNeuron(numInputsPerNeuron)
 
 proc newNeuralNetMeta*(numInputs, numOutputs, numHiddenLayers, numNeuronsPerHiddenLayer: int = 0): NeuralNetMeta = 

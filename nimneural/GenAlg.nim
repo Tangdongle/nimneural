@@ -18,7 +18,7 @@ proc newGenAlg*(popSize, numWeights: int, mutationRate, crossoverRate: float): G
   result.population = newSeq[GenomeRef](popSize)
 
   #Populate our genomes
-  for i in 0 .. <result.popSize:
+  for i in 0 ..< result.popSize:
     result.population[i] = newGenome()
 
     #populate each genome's chromosomes
@@ -55,15 +55,15 @@ proc crossover(alg: GenAlgRef, mum, dad: seq[WeightRef]): (seq[WeightRef], seq[W
 
 
   #determine a crossover point
-  var cp: int = random(0 .. <alg.chromoLength)
+  var cp: int = random(0 ..< alg.chromoLength)
 
   var baby1, baby2 = newSeq[WeightRef](cp)
 
-  for i in 0 .. <cp:
+  for i in 0 ..< cp:
     baby1[i].deepCopy(mum[i])
     baby2[i].deepCopy(dad[i])
 
-  for i in cp .. <mum.len:
+  for i in cp ..< mum.len:
     baby1[i].deepCopy(dad[i])
     baby2[i].deepCopy(mum[i])
 
